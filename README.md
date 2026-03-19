@@ -3,7 +3,6 @@
 [![Playwright](https://img.shields.io/badge/Playwright-1.58.2-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Node.js](https://img.shields.io/badge/Node.js-LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![CI/CD](https://github.com/Tr331/playwright-lab/actions/workflows/playwright.yml/badge.svg)](https://github.com/Tr331/playwright-lab/actions)
 
 A modern, scalable, and maintainable end-to-end test automation framework built with **Playwright** and **TypeScript**, following industry best practices and the **Page Object Model (POM)** design pattern.
 
