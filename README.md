@@ -18,6 +18,7 @@ A modern, scalable, and maintainable end-to-end test automation framework built 
 | 🌐 **Multi-Browser** | Cross-browser testing (Chromium, Firefox, WebKit) |
 | 🏷️ **Test Tagging** | Selective test execution with `@smoke`, `@login` tags |
 | 📊 **HTML Reports** | Interactive test reports with trace viewer |
+| 🧪 **Allure Reports** | Detailed test result dashboards with attachments |
 | 🔄 **CI/CD Ready** | GitHub Actions workflow for automated testing |
 | 📝 **TypeScript** | Full type safety with strict mode enabled |
 | 🧩 **Test Data Management** | JSON-based test data separation |
@@ -98,6 +99,8 @@ playwright-lab/
 | `npm run test:ui` | Run tests in UI mode (interactive) |
 | `npm run test:debug` | Run tests in debug mode |
 | `npm run test:report` | Open HTML report viewer |
+| `npm run test:allure` | Run tests and generate Allure results |
+| `npm run allure:open` | Open the latest Allure report |
 
 ---
 
