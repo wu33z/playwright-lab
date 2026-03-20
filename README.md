@@ -286,9 +286,9 @@ This project is licensed under the ISC License.
 
 ## 👤 Author
 
-**Tr331**
+**Mueez**
 
-[![GitHub](https://img.shields.io/badge/GitHub-Tr331-181717?logo=github)](https://github.com/Tr331)
+[![GitHub](https://img.shields.io/badge/GitHub-Tr331-181717?logo=github)](https://github.com/wu33z)
 
 ---
 
