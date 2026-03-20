@@ -288,7 +288,7 @@ This project is licensed under the ISC License.
 
 **Mueez**
 
-[![GitHub](https://img.shields.io/badge/GitHub-Tr331-181717?logo=github)](https://github.com/wu33z)
+[![GitHub](https://img.shields.io/badge/GitHub-wu33z-181717?logo=github)](https://github.com/wu33z)
 
 ---
 
