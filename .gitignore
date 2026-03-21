@@ -42,3 +42,6 @@ temp/
 
 # Auth storage (if not using playwright/.auth/)
 *.storageState.json
+
+#allure-results
+/allure-results
