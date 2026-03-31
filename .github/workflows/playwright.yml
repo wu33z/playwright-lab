@@ -95,32 +95,10 @@ jobs:
             playwright-report/data/
           retention-days: 7
 
-      # Optional: Uncomment to enable Allure Report
-      # - name: Upload Allure Results
-      #   uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: allure-results
-      #     path: allure-results/
-      #     retention-days: 7
-
-      # Optional: Uncomment to enable Slack notifications
-      # - name: Slack Notification
-      #   uses: slackapi/slack-github-action@v1.24.0
-      #   if: failure()
-      #   with:
-      #     payload: |
-      #       {
-      #         "text": "Playwright tests failed in ${{ github.repository }}",
-      #         "blocks": [
-      #           {
-      #             "type": "section",
-      #             "text": {
-      #               "type": "mrkdwn",
-      #               "text": ":x: Playwright tests failed in *${{ github.repository }}*\nBranch: *${{ github.ref }}*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
-      #             }
-      #           }
-      #         ]
-      #       }
-      #   env:
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results
+          path: allure-results/
+          retention-days: 7
