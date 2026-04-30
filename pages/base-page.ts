@@ -1,22 +1,28 @@
 import { Page } from "@playwright/test";
 
 export abstract class BasePage {
+  constructor(protected readonly page: Page) {}
 
-    constructor(protected readonly page: Page) { }
+  async navigate(url: string): Promise<void> {
+    await this.page.goto(url);
+  }
 
-    async navigate(url: string): Promise<void> {
-        await this.page.goto(url);
+  async getTitle(): Promise<string> {
+    return this.page.title();
+  }
+
+  async getCurrentUrl(): Promise<string> {
+    return this.page.url();
+  }
+
+  async waitForPageLoad(): Promise<void> {
+    await this.page.waitForLoadState("domcontentloaded");
+  }
+
+  async clickNoThanksButtonIfVisible(): Promise<void> {
+    const noThanksButton = this.page.getByRole("button", { name: "No thanks" });
+    if (await noThanksButton.isVisible()) {
+      await noThanksButton.click();
     }
-
-    async getTitle(): Promise<string> {
-        return this.page.title();
-    }
-
-    async getCurrentUrl(): Promise<string> {
-        return this.page.url();
-    }
-
-    async waitForPageLoad(): Promise<void> {
-        await this.page.waitForLoadState('domcontentloaded');
-    }
+  }
 }

@@ -1,40 +1,26 @@
-import { Page } from "@playwright/test";
 import { BasePage } from "./base-page";
+import { Page } from "@playwright/test";
 
 export class LoginPage extends BasePage {
+  constructor(page: Page) {
+    super(page);
+  }
 
-    constructor(page: Page) {
-        super(page);
-    }
+  get userNameInput() {
+    return this.page.getByRole("textbox", { name: "Your name" });
+  }
 
-    get usernameInput() {
-        return this.page.getByRole('textbox', { name: 'Username' });
-    }
-    get passwordInput() {
-        return this.page.getByRole('textbox', { name: 'Password' })
-    }
-    get submitButton() {
-        return this.page.getByRole('button', { name: 'Submit' });
-    }
-    get errorMessage() {
-        return this.page.getByText('Your username is invalid!');
-    }
+  get passwordInput() {
+    return this.page.getByRole("textbox", { name: "Your password" });
+  }
 
-    async open(url: string): Promise<void> {
-        await this.navigate(url);
-    }
+  get loginButton() {
+    return this.page.getByRole("button", { name: "Login" });
+  }
 
-    async login(userName: string, password: string): Promise<void> {
-        await this.usernameInput.fill(userName);
-        await this.passwordInput.fill(password);
-        await this.submitButton.click();
-    }
-
-    async isErrorMessageVisible(): Promise<boolean> {
-        return this.errorMessage.isVisible();
-    }
-
-    async getErrorMessage(): Promise<string> {
-        return (await this.errorMessage.textContent()) ?? '';
-    }
+  async login(username: string, password: string): Promise<void> {
+    await this.userNameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
 }

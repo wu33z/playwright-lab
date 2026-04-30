@@ -10,18 +10,18 @@ A modern, scalable, and maintainable end-to-end test automation framework built 
 
 ## 🚀 Features
 
-| Feature | Description |
-|---------|-------------|
-| 🎯 **Page Object Model** | Clean, maintainable page objects with base class inheritance |
-| 🔧 **Custom Fixtures** | Dependency injection for reusable test components |
-| 🌐 **Multi-Browser** | Cross-browser testing (Chromium, Firefox, WebKit) |
-| 🏷️ **Test Tagging** | Selective test execution with `@smoke`, `@login` tags |
-| 📊 **HTML Reports** | Interactive test reports with trace viewer |
-| 🧪 **Allure Reports** | Detailed test result dashboards with attachments |
-| 🔄 **CI/CD Ready** | GitHub Actions workflow for automated testing |
-| 📝 **TypeScript** | Full type safety with strict mode enabled |
-| 🧩 **Test Data Management** | JSON-based test data separation |
-| 🎭 **Parallel Execution** | Fast test runs with parallel processing |
+| Feature                     | Description                                                  |
+| --------------------------- | ------------------------------------------------------------ |
+| 🎯 **Page Object Model**    | Clean, maintainable page objects with base class inheritance |
+| 🔧 **Custom Fixtures**      | Dependency injection for reusable test components            |
+| 🌐 **Multi-Browser**        | Cross-browser testing (Chromium, Firefox, WebKit)            |
+| 🏷️ **Test Tagging**         | Selective test execution with `@smoke`, `@login` tags        |
+| 📊 **HTML Reports**         | Interactive test reports with trace viewer                   |
+| 🧪 **Allure Reports**       | Detailed test result dashboards with attachments             |
+| 🔄 **CI/CD Ready**          | GitHub Actions workflow for automated testing                |
+| 📝 **TypeScript**           | Full type safety with strict mode enabled                    |
+| 🧩 **Test Data Management** | JSON-based test data separation                              |
+| 🎭 **Parallel Execution**   | Fast test runs with parallel processing                      |
 
 ---
 
@@ -36,6 +36,7 @@ Git
 ```
 
 Verify installations:
+
 ```bash
 node --version
 npm --version
@@ -87,19 +88,19 @@ playwright-lab/
 
 ## 🎮 Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run test` | Run all tests |
-| `npm run test:smoke` | Run smoke tests only (`@smoke` tagged) |
-| `npm run test:login` | Run login tests only (`@login` tagged) |
-| `npm run test:chrome` | Run tests on Chromium only |
-| `npm run test:firefox` | Run tests on Firefox only |
-| `npm run test:webkit` | Run tests on WebKit only |
-| `npm run test:ui` | Run tests in UI mode (interactive) |
-| `npm run test:debug` | Run tests in debug mode |
-| `npm run test:report` | Open HTML report viewer |
-| `npm run test:allure` | Run tests and generate Allure results |
-| `npm run allure:open` | Open the latest Allure report |
+| Command                | Description                            |
+| ---------------------- | -------------------------------------- |
+| `npm run test`         | Run all tests                          |
+| `npm run test:smoke`   | Run smoke tests only (`@smoke` tagged) |
+| `npm run test:login`   | Run login tests only (`@login` tagged) |
+| `npm run test:chrome`  | Run tests on Chromium only             |
+| `npm run test:firefox` | Run tests on Firefox only              |
+| `npm run test:webkit`  | Run tests on WebKit only               |
+| `npm run test:ui`      | Run tests in UI mode (interactive)     |
+| `npm run test:debug`   | Run tests in debug mode                |
+| `npm run test:report`  | Open HTML report viewer                |
+| `npm run test:allure`  | Run tests and generate Allure results  |
+| `npm run allure:open`  | Open the latest Allure report          |
 
 ---
 
@@ -108,26 +109,29 @@ playwright-lab/
 ### Basic Test Structure
 
 ```typescript
-import { expect, test } from '../fixtures/custom-fixture';
-import users from '../test-data/users.json';
+import { expect, test } from "../fixtures/custom-fixture";
+import users from "../test-data/users.json";
 
-test.describe('User Authentication', () => {
+test.describe("User Authentication", () => {
+  test(
+    "successful login",
+    { tag: ["@smoke", "@login"] },
+    async ({ loginPage }) => {
+      await test.step("GIVEN user is on login page", async () => {
+        await loginPage.open("/practice-test-login/");
+      });
 
-    test('successful login', { tag: ['@smoke', '@login'] }, async ({ loginPage }) => {
-        
-        await test.step('GIVEN user is on login page', async () => {
-            await loginPage.open('/practice-test-login/');
-        });
+      await test.step("WHEN user enters valid credentials", async () => {
+        await loginPage.login(users.valid.username, users.valid.password);
+      });
 
-        await test.step('WHEN user enters valid credentials', async () => {
-            await loginPage.login(users.valid.username, users.valid.password);
-        });
-
-        await test.step('THEN user is redirected to dashboard', async () => {
-            await expect(await loginPage.getCurrentUrl())
-                .toContain('logged-in-successfully');
-        });
-    });
+      await test.step("THEN user is redirected to dashboard", async () => {
+        await expect(await loginPage.getCurrentUrl()).toContain(
+          "logged-in-successfully",
+        );
+      });
+    },
+  );
 });
 ```
 
@@ -135,24 +139,23 @@ test.describe('User Authentication', () => {
 
 ```typescript
 export class LoginPage extends BasePage {
+  get usernameInput() {
+    return this.page.getByRole("textbox", { name: "Username" });
+  }
 
-    get usernameInput() {
-        return this.page.getByRole('textbox', { name: 'Username' });
-    }
+  get passwordInput() {
+    return this.page.getByRole("textbox", { name: "Password" });
+  }
 
-    get passwordInput() {
-        return this.page.getByRole('textbox', { name: 'Password' });
-    }
+  get submitButton() {
+    return this.page.getByRole("button", { name: "Submit" });
+  }
 
-    get submitButton() {
-        return this.page.getByRole('button', { name: 'Submit' });
-    }
-
-    async login(userName: string, password: string): Promise<void> {
-        await this.usernameInput.fill(userName);
-        await this.passwordInput.fill(password);
-        await this.submitButton.click();
-    }
+  async login(userName: string, password: string): Promise<void> {
+    await this.usernameInput.fill(userName);
+    await this.passwordInput.fill(password);
+    await this.submitButton.click();
+  }
 }
 ```
 
@@ -164,20 +167,20 @@ export class LoginPage extends BasePage {
 
 ```typescript
 export default defineConfig({
-  testDir: './tests',
-  fullyParallel: true,        // Run tests in parallel
+  testDir: "./tests",
+  fullyParallel: true, // Run tests in parallel
   forbidOnly: !!process.env.CI, // Fail on test.only in CI
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: "html",
   use: {
-    baseURL: 'https://practicetestautomation.com',
-    trace: 'on-first-retry',
+    baseURL: "https://practicetestautomation.com",
+    trace: "on-first-retry",
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],
 });
 ```
@@ -213,6 +216,7 @@ npm run test:report
 ```
 
 This opens a browser with:
+
 - ✅/❌ Test results overview
 - 📸 Screenshots of failures
 - 🎬 Trace viewer for debugging
@@ -226,14 +230,14 @@ Test data is stored in `test-data/users.json`:
 
 ```json
 {
-    "valid": {
-        "username": "student",
-        "password": "Password123"
-    },
-    "invalidPassword": {
-        "username": "student",
-        "password": "helloWorld"
-    }
+  "valid": {
+    "username": "student",
+    "password": "Password123"
+  },
+  "invalidPassword": {
+    "username": "student",
+    "password": "helloWorld"
+  }
 }
 ```
 
@@ -243,14 +247,14 @@ Test data is stored in `test-data/users.json`:
 
 ## 🎯 Best Practices Followed
 
-| Practice | Implementation |
-|----------|----------------|
+| Practice                         | Implementation                               |
+| -------------------------------- | -------------------------------------------- |
 | **Accessibility-First Locators** | `getByRole()`, `getByLabel()`, `getByText()` |
-| **Separation of Concerns** | Tests, Pages, Data, Fixtures separated |
-| **DRY Principle** | BasePage for common methods |
-| **Type Safety** | TypeScript strict mode, explicit types |
-| **Descriptive Test Names** | Clear Given/When/Then structure |
-| **Environment Variables** | Base URL configurable (ready for .env) |
+| **Separation of Concerns**       | Tests, Pages, Data, Fixtures separated       |
+| **DRY Principle**                | BasePage for common methods                  |
+| **Type Safety**                  | TypeScript strict mode, explicit types       |
+| **Descriptive Test Names**       | Clear Given/When/Then structure              |
+| **Environment Variables**        | Base URL configurable (ready for .env)       |
 
 ---
 
