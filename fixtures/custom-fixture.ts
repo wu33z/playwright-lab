@@ -2,7 +2,13 @@ import { test as base } from '@playwright/test';
 import { LoginPage } from '../pages/login-page';
 import { DashBoardPage } from '../pages/dash-board-page';
 
-export const test = base.extend<{ loginPage: LoginPage, dashBoardPage: DashBoardPage }>({
+type myFixtures =  {
+    loginPage: LoginPage,
+    dashBoardPage: DashBoardPage
+}
+
+
+export const test = base.extend<myFixtures>({
     loginPage: async ({ page }, use) => {
         const loginPage = new LoginPage(page);
         await use(loginPage);

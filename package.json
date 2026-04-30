@@ -15,7 +15,8 @@
     "test:allure": "playwright test --reporter=allure-playwright",
     "allure:generate": "allure generate allure-results --clean -o allure-report",
     "allure:open": "allure open allure-report",
-    "allure:report": "npm run allure:generate && npm run allure:open"
+    "allure:report": "npm run allure:generate && npm run allure:open",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -24,8 +25,11 @@
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
     "allure-commandline": "^2.38.1",
     "allure-playwright": "^3.6.0",
+    "eslint-plugin-playwright": "^2.10.1",
     "ts-node": "^10.9.2"
   }
 }
