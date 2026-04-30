@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from 'dotenv';
 
 /**
  * Read environment variables from file.
@@ -8,7 +9,7 @@ import { defineConfig, devices } from "@playwright/test";
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-const isHeadless = process.env.HEADLESS?.toLowerCase() === "true";
+dotenv.config({ path: '.env' });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -34,7 +35,7 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "on-first-retry",
-    headless: isHeadless !== undefined ? isHeadless : true,
+    headless: process.env.CI ? true : process.env.HEADLESS !== 'false',
     baseURL: "https://next-example-store-stefan-judis.vercel.app/",
   },
 
