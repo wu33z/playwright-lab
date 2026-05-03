@@ -22,9 +22,9 @@
     "format:check": "prettier --check \"**/*.{ts,js,json,md}\""
   },
   "keywords": [],
-  "author": "",
+  "author": "Mueez",
   "license": "ISC",
-  "description": "",
+  "description": "A modern, scalable, and maintainable end-to-end test automation framework built with Playwright and TypeScript for the Next.js Example Store.",
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.5.0",

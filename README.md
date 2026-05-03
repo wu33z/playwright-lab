@@ -4,7 +4,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Node.js](https://img.shields.io/badge/Node.js-LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 
-A modern, scalable, and maintainable end-to-end test automation framework built with **Playwright** and **TypeScript**, following industry best practices and the **Page Object Model (POM)** design pattern.
+A modern, scalable, and maintainable end-to-end test automation framework built with **Playwright** and **TypeScript** for testing the **Next.js Example Store** application, following industry best practices and the **Page Object Model (POM)** design pattern.
 
 ---
 
@@ -30,7 +30,7 @@ A modern, scalable, and maintainable end-to-end test automation framework built 
 Ensure you have the following installed:
 
 ```bash
-Node.js >= 18.x    # LTS recommended
+Node.js >= 20.x    # LTS recommended
 npm >= 9.x
 Git
 ```
@@ -68,20 +68,28 @@ npx playwright install-deps
 
 ```
 playwright-lab/
-├── fixtures/           # Custom test fixtures & extensions
-│   └── custom-fixture.ts
-├── pages/              # Page Object Models
-│   ├── base-page.ts    # Base page with common methods
-│   └── login-page.ts   # Login page specific locators/actions
-├── test-data/          # Test data files (JSON)
-│   └── users.json
-├── tests/              # Test specifications
-│   └── user-authentication.spec.ts
-├── .github/workflows/  # CI/CD pipeline configuration
+├── .env                    # Environment variables
+├── .github/workflows/      # CI/CD pipeline configuration
 │   └── playwright.yml
-├── playwright.config.ts # Playwright configuration
-├── package.json        # Dependencies & scripts
-└── tsconfig.json       # TypeScript configuration
+├── allure-results/         # Allure test results
+├── eslint.config.mjs       # ESLint configuration
+├── fixtures/               # Custom test fixtures & extensions
+│   └── custom-fixture.ts
+├── pages/                  # Page Object Models
+│   ├── base-page.ts        # Base page with common methods
+│   ├── dash-board-page.ts  # Dashboard page specific methods
+│   └── login-page.ts       # Login page specific locators/actions
+├── playwright-report/      # Playwright HTML reports
+├── test-data/              # Test data files (JSON)
+│   └── users.json
+├── test-results/           # Test result artifacts
+├── tests/                  # Test specifications
+│   └── next-example-store/
+│       └── user-authentication.spec.ts
+├── playwright.config.ts    # Playwright configuration
+├── package.json            # Dependencies & scripts
+├── tsconfig.json           # TypeScript configuration
+└── README.md               # This file
 ```
 
 ---
@@ -100,7 +108,13 @@ playwright-lab/
 | `npm run test:debug`   | Run tests in debug mode                |
 | `npm run test:report`  | Open HTML report viewer                |
 | `npm run test:allure`  | Run tests and generate Allure results  |
+| `npm run allure:generate` | Generate Allure report from results    |
 | `npm run allure:open`  | Open the latest Allure report          |
+| `npm run allure:report`| Generate and open Allure report        |
+| `npm run lint`         | Run ESLint for code quality checks     |
+| `npm run lint:fix`     | Run ESLint and auto-fix issues         |
+| `npm run format`       | Format code with Prettier              |
+| `npm run format:check` | Check code formatting with Prettier    |
 
 ---
 
@@ -113,25 +127,17 @@ import { expect, test } from "../fixtures/custom-fixture";
 import users from "../test-data/users.json";
 
 test.describe("User Authentication", () => {
-  test(
-    "successful login",
-    { tag: ["@smoke", "@login"] },
-    async ({ loginPage }) => {
-      await test.step("GIVEN user is on login page", async () => {
-        await loginPage.open("/practice-test-login/");
-      });
+  test("successful-login", async ({ loginPage, dashBoardPage }) => {
+    await loginPage.navigate("/login");
+    await loginPage.clickNoThanksButtonIfVisible();
 
-      await test.step("WHEN user enters valid credentials", async () => {
-        await loginPage.login(users.valid.username, users.valid.password);
-      });
+    await loginPage.login(users.valid.username, users.valid.password);
 
-      await test.step("THEN user is redirected to dashboard", async () => {
-        await expect(await loginPage.getCurrentUrl()).toContain(
-          "logged-in-successfully",
-        );
-      });
-    },
-  );
+    await expect(dashBoardPage.loginSuccessMessage).toBeVisible();
+    await expect(dashBoardPage.loginSuccessMessage).toContainText(
+      users.valid.username,
+    );
+  });
 });
 ```
 
@@ -139,15 +145,25 @@ test.describe("User Authentication", () => {
 
 ```typescript
 export class LoginPage extends BasePage {
-  get usernameInput() {
-    return this.page.getByRole("textbox", { name: "Username" });
+  get userNameInput() {
+    return this.page.getByRole("textbox", { name: "Your name" });
   }
 
   get passwordInput() {
-    return this.page.getByRole("textbox", { name: "Password" });
+    return this.page.getByRole("textbox", { name: "Your password" });
   }
 
-  get submitButton() {
+  get loginButton() {
+    return this.page.getByRole("button", { name: "Login" });
+  }
+
+  async login(username: string, password: string): Promise<void> {
+    await this.userNameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
+}
+```
     return this.page.getByRole("button", { name: "Submit" });
   }
 
@@ -161,6 +177,21 @@ export class LoginPage extends BasePage {
 
 ---
 
+## 🌍 Environment Variables
+
+The project supports environment variables via `.env` file:
+
+- `HEADLESS`: Set to `false` to run tests in headed mode (default: `true` in CI, `false` otherwise)
+- `CI`: Automatically set in CI environments for retries and parallel settings
+
+Example `.env` file:
+
+```env
+HEADLESS=false
+```
+
+---
+
 ## ⚙️ Configuration
 
 ### Key Settings (`playwright.config.ts`)
@@ -168,14 +199,17 @@ export class LoginPage extends BasePage {
 ```typescript
 export default defineConfig({
   testDir: "./tests",
-  fullyParallel: true, // Run tests in parallel
-  forbidOnly: !!process.env.CI, // Fail on test.only in CI
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: "html",
+  reporter: [["html"]],
   use: {
-    baseURL: "https://practicetestautomation.com",
+    baseURL: "https://next-example-store-stefan-judis.vercel.app",
     trace: "on-first-retry",
+    screenshot: "only-on-failure",
+    video: "on-first-retry",
+    headless: process.env.CI ? true : process.env.HEADLESS !== 'false',
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
@@ -207,6 +241,28 @@ The framework includes a **GitHub Actions** workflow that:
 
 ---
 
+## 🧹 Code Quality & Formatting
+
+The project uses **ESLint** and **Prettier** for code quality and consistent formatting.
+
+```bash
+# Check for linting issues
+npm run lint
+
+# Auto-fix linting issues
+npm run lint:fix
+
+# Format code
+npm run format
+
+# Check formatting
+npm run format:check
+```
+
+**ESLint Configuration:** `eslint.config.mjs` (Flat config with TypeScript and Playwright rules)
+
+---
+
 ## 📊 Test Reporting
 
 After running tests, view the interactive HTML report:
@@ -231,12 +287,12 @@ Test data is stored in `test-data/users.json`:
 ```json
 {
   "valid": {
-    "username": "student",
+    "username": "johnDoe",
     "password": "Password123"
   },
-  "invalidPassword": {
-    "username": "student",
-    "password": "helloWorld"
+  "emptyCredentials": {
+    "username": "",
+    "password": ""
   }
 }
 ```
